@@ -27,11 +27,11 @@ const organizationSchema:Schema<Organization>=new Schema({
     },
     password:{
         type:String,
-        required:[true,"password is required"],
+        //required:[true,"password is required"],
     },
     about:{
         type:String,
-        required:false,
+        //required:false,
         trim:true
     },
     rating:{
@@ -48,7 +48,7 @@ const organizationSchema:Schema<Organization>=new Schema({
     },
     category:{
         type:String,
-        required:[true,"Type of organization is required"],
+        //required:[true,"Type of organization is required"],
     },
     phone:{
         type:String,
