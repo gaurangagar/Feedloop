@@ -1,41 +1,56 @@
 import mongoose,{Schema,Document, Types} from 'mongoose';
 
 export interface feedbackForm extends Document{
+    isFilled:boolean,
     productRating: number;
     shopRating: number;
     answers: { question: string; answer: string }[];
+    formid:string
 }
 
 const feedbackFormSchema:Schema<feedbackForm>=new Schema({
+    isFilled:{
+        type:Boolean,
+        default:false
+    },
     productRating: {
         type: Number,
-        required: [true, "Product rating is required"],
+        default:null,
         min: 1,
         max: 5,
     },
     shopRating: {
         type: Number,
-        required: [true, "Shop rating is required"],
+        default:null,
         min: 1,
         max: 5,
     },
-    answers: [
-      {
-        question: { type: String, required: true },
-        answer: { type: String, required: true },
-      },
-    ],
+    answers: {
+        type:[
+            {
+                question: { type: String, required: true },
+                answer: { type: String, default:"" },
+            },
+        ],
+        validate:{
+            validator: (arr: { question: string; answer: string }[]) =>
+                arr.length > 0,
+            message: "At least one question-answer pair is required",
+        },
+    },
+    formid:{
+        type:String,
+        required:true
+    }
 },{timestamps:true})
 
-const feedbackFormModel=(mongoose.models.feedbackForm as mongoose.Model<feedbackForm>) || mongoose.model<feedbackForm>("feedbackForm",feedbackFormSchema)
+export const feedbackFormModel=(mongoose.models.feedbackForm as mongoose.Model<feedbackForm>) || mongoose.model<feedbackForm>("feedbackForm",feedbackFormSchema)
 
 export interface Order extends Document{
     productName:string,
     customeremail:string,
-    organizationid:Types.ObjectId,
-    orderId:string,
     date:Date,
-    feedbackForm: mongoose.Types.ObjectId,
+    feedbackForm: mongoose.Types.ObjectId | feedbackForm,
     orderNo:string,
     gstin:string,
 }
@@ -48,15 +63,10 @@ const OrderSchema: Schema<Order> = new Schema({
     customeremail: {
         type: String,
         required: [true, "Email of customer is required"],
-    },
-    organizationid: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: [true, "Organization id is required"],
-        ref: "Organization",
-    },
-    orderId: {
-        type: String,
-        required: [true, "Order id is required"],
+        match:[
+            /^\S+@\S+\.\S+$/,
+            "Please provide a valid email address",
+        ],
     },
     date: {
         type: Date,
@@ -74,7 +84,11 @@ const OrderSchema: Schema<Order> = new Schema({
     gstin: {
         type: String,
         required: [true, "GSTIN is required"],
-    },
+        match: [
+            /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+            "Please provide a valid GSTIN",
+        ],
+    }
 }, { timestamps: true });
 
 const OrderModel=(mongoose.models.Order as mongoose.Model<Order>) || mongoose.model<Order>("Order",OrderSchema)
