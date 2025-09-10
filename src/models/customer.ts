@@ -21,7 +21,6 @@ const CustomerSchema:Schema<Customer>=new Schema({
     },
     password:{
         type:String,
-        required:[true,"password is required"],
     },
     phone:{
         type:String,

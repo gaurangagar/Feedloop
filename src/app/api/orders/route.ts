@@ -5,6 +5,7 @@ import { User } from "next-auth";
 import OrderModel, { feedbackFormModel } from "@/models/feedbackForm";
 import { v4 as uuidv4 } from 'uuid';
 import { sendFeedbackEmail } from "@/helpers/feedbackEmail";
+import CustomerModel from "@/models/customer";
 
 export async function POST(request:Request) {
     await dbConnect();
@@ -40,6 +41,7 @@ export async function POST(request:Request) {
           orderno,
           gstin
       })
+      const cust=CustomerModel.create({name:customername,email:customeremail})
       await sendFeedbackEmail({productname:productName, customername, orderno, organizationName: user.name ?? "", gstin, date, feedbackForm:feedback.formid, customerEmail:customeremail})
     } catch(error){
       console.error("Feedback API Error:", error);
@@ -51,5 +53,4 @@ export async function POST(request:Request) {
         { status: 500 }
       );
     }
-
 }
