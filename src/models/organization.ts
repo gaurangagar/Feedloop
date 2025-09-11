@@ -11,6 +11,7 @@ export interface Organization extends Document{
     category:string,
     phone?:string,
     website?:string,
+    addRating: (newRating: number) => Promise<Organization>
 }
 
 const organizationSchema:Schema<Organization>=new Schema({

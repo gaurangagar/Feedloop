@@ -1,4 +1,5 @@
 import mongoose,{Schema,Document, Types} from 'mongoose';
+import { Organization } from './organization';
 
 export interface feedbackForm extends Document{
     isFilled:boolean,
@@ -32,6 +33,7 @@ const feedbackFormSchema:Schema<feedbackForm>=new Schema({
                 answer: { type: String, default:"" },
             },
         ],
+        required:true,
         validate:{
             validator: (arr: { question: string; answer: string }[]) =>
                 arr.length > 0,
@@ -47,15 +49,21 @@ const feedbackFormSchema:Schema<feedbackForm>=new Schema({
 export const feedbackFormModel=(mongoose.models.feedbackForm as mongoose.Model<feedbackForm>) || mongoose.model<feedbackForm>("feedbackForm",feedbackFormSchema)
 
 export interface Order extends Document{
+    orderId:string
     productName:string,
     customeremail:string,
     date:Date,
     feedbackForm: mongoose.Types.ObjectId | feedbackForm,
     orderNo:string,
     gstin:string,
+    organizationid:mongoose.Types.ObjectId | Organization
 }
 
 const OrderSchema: Schema<Order> = new Schema({
+    orderId:{
+        type:String,
+        required: [true, "porderId is required"],
+    },
     productName: {
         type: String,
         required: [true, "product name is required"],
@@ -88,6 +96,11 @@ const OrderSchema: Schema<Order> = new Schema({
             /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
             "Please provide a valid GSTIN",
         ],
+    },
+    organizationid:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Organization",
+        required: [true, "Organization is required"],
     }
 }, { timestamps: true });
 

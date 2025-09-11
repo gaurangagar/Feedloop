@@ -2,11 +2,12 @@ import { feedbackSummarize } from "@/helpers/feedbackSummarize";
 import { sendinsightEmail } from "@/helpers/insightEmail";
 import dbConnect from "@/lib/dbConnect";
 import { feedbackFormModel } from "@/models/feedbackForm";
+import organizationModel from "@/models/organization";
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
     await dbConnect();
     try {
-        const { answers,productRating,shopRating,organizationEmail } = await request.json();
+        const { answers,productRating,shopRating,organizationEmail,orderId } = await request.json();
         if (!answers || !Array.isArray(answers)) {
         return Response.json(
             { success: false, message: "Answers must be an array" },
@@ -49,8 +50,19 @@ export async function POST(request: Request, { params }: { params: { id: string 
         form.shopRating=shopRating;
         form.isFilled=true
         await form.save();
-        const response = await feedbackSummarize({ answers: form.answers });
-        await sendinsightEmail({organizationEmail,feedbackInsight:response.text})
+        const order=await orderId.find({orderId})
+        const org = await organizationModel.findById(order.organizationid);
+        if (!org) {
+            return Response.json(
+                {
+                    success: false,
+                    message: "Organization not found",
+                },{ status: 404 }
+            );
+        }
+        const response = await feedbackSummarize(orderId, form.answers);
+        await sendinsightEmail({ orderId, companyName: org.name, organizationEmail: org.email, feedbackInsight: response });
+        await org.addRating(shopRating);
         return Response.json(
             {
                 success: true,

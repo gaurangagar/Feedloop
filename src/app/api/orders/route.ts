@@ -6,6 +6,7 @@ import OrderModel, { feedbackFormModel } from "@/models/feedbackForm";
 import { v4 as uuidv4 } from 'uuid';
 import { sendFeedbackEmail } from "@/helpers/feedbackEmail";
 import CustomerModel from "@/models/customer";
+import organizationModel from "@/models/organization";
 
 export async function POST(request:Request) {
     await dbConnect();
@@ -18,7 +19,24 @@ export async function POST(request:Request) {
         }, { status: 401 });
     }
     try{
-      const {productName,customername,customeremail,orderno,gstin,questions, date}=await request.json();
+      const {orderId,productName,customername,customeremail,orderno,gstin,questions, date,organizationid}=await request.json();
+      const organization=await organizationModel.findById(organizationid)
+      if (!organization) {
+        return Response.json(
+          {
+            success: false,
+            message: "Organization not found",
+          },{ status: 404 });
+      }
+      if(organization.email!=user.email) {
+        return Response.json(
+          {
+            success: false,
+            message: "You are not authorized to make order from this organization.",
+          },
+          { status: 403 }
+        )
+      }
       if (!questions || !Array.isArray(questions) || questions.length === 0) {
         return Response.json(
           {
@@ -34,14 +52,16 @@ export async function POST(request:Request) {
           answers,
       })
       const order=await OrderModel.create({
+          orderId,
           productName,
           customeremail,
           date,
           feedback,
           orderno,
-          gstin
+          gstin,
+          organizationid
       })
-      const cust=CustomerModel.create({name:customername,email:customeremail})
+      const cust=await CustomerModel.create({name:customername,email:customeremail})
       await sendFeedbackEmail({productname:productName, customername, orderno, organizationName: user.name ?? "", gstin, date, feedbackForm:feedback.formid, customerEmail:customeremail})
     } catch(error){
       console.error("Feedback API Error:", error);

@@ -1,9 +1,10 @@
 import { ai } from "@/lib/genai";
+import { FeedbackSummaryEmailInterface } from "@/types/FeedbackSummaryEmailInterface";
 
 type FeedbackItem = { question: string; answer: string };
 
-export async function feedbackSummarize(orderId: string, feedbackArray: FeedbackItem[]) {
-    const response=await ai.models.generateContent({
+export async function feedbackSummarize(orderId: string, feedbackArray: FeedbackItem[]):Promise<FeedbackSummaryEmailInterface> {
+    const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: `
             You are an assistant that reviews customer feedback for companies.
@@ -36,5 +37,10 @@ export async function feedbackSummarize(orderId: string, feedbackArray: Feedback
             Make the tone professional and business-friendly, suitable for emailing directly to the company.
             `
     });
-    return response;
+
+    // Extract the JSON string from the response and parse it
+    const content = response?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+    const summary: FeedbackSummaryEmailInterface = JSON.parse(content);
+
+    return summary;
 }
