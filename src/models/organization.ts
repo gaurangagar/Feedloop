@@ -3,12 +3,12 @@ import mongoose,{Schema,Document} from 'mongoose';
 export interface Organization extends Document{
     name:string,
     email:string,
-    password:string,
+    password?:string,
     about?:string,
     rating:number,
     ratingCount:number,
     ratingSum:number,
-    category:string,
+    category?:string,
     phone?:string,
     website?:string,
     addRating: (newRating: number) => Promise<Organization>

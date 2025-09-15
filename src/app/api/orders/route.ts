@@ -19,24 +19,7 @@ export async function POST(request:Request) {
         }, { status: 401 });
     }
     try{
-      const {orderId,productName,customername,customeremail,orderno,gstin,questions, date,organizationid}=await request.json();
-      const organization=await organizationModel.findById(organizationid)
-      if (!organization) {
-        return Response.json(
-          {
-            success: false,
-            message: "Organization not found",
-          },{ status: 404 });
-      }
-      if(organization.email!=user.email) {
-        return Response.json(
-          {
-            success: false,
-            message: "You are not authorized to make order from this organization.",
-          },
-          { status: 403 }
-        )
-      }
+      const {orderId,productName,customername,customeremail,orderno,gstin,questions, date,}=await request.json();
       if (!questions || !Array.isArray(questions) || questions.length === 0) {
         return Response.json(
           {
@@ -51,7 +34,17 @@ export async function POST(request:Request) {
           formid: uuidv4(),
           answers,
       })
-      const order=await OrderModel.create({
+      const org = await organizationModel.findOne({ email: user.email });
+      if (!org) {
+        return Response.json(
+          {
+            success: false,
+            message: "Organization not found for the current user.",
+          },
+          { status: 404 }
+        );
+      }
+      const order = await OrderModel.create({
           orderId,
           productName,
           customeremail,
@@ -59,16 +52,59 @@ export async function POST(request:Request) {
           feedback,
           orderno,
           gstin,
-          organizationid
+          organizationid: org._id
       })
       const cust=await CustomerModel.create({name:customername,email:customeremail})
       await sendFeedbackEmail({productname:productName, customername, orderno, organizationName: user.name ?? "", gstin, date, feedbackForm:feedback.formid, customerEmail:customeremail})
+      return Response.json({
+        success:true,
+        message:'Orders successfully created and feedback mail send to customer',
+      },{status:200})
     } catch(error){
       console.error("Feedback API Error:", error);
       return Response.json(
         {
           success: false,
           message: "Something went wrong while creating feedback form",
+        },
+        { status: 500 }
+      );
+    }
+}
+
+export async function GET(request:Request) {
+    await dbConnect();
+    const session = await getServerSession(authOptions);
+    const user: User = session?.user as User;
+    if (!session || !session.user) {
+        return Response.json({
+            success: false,
+            message: "Not authenticated"
+        }, { status: 401 });
+    }
+    try{
+      const org = await organizationModel.findOne({ email: user.email });
+      if (!org) {
+        return Response.json(
+          {
+            success: false,
+            message: "Organization not found for the current user.",
+          },
+          { status: 404 }
+        );
+      }
+      const allorders=await OrderModel.find({organizationid:org._id})
+      return Response.json({
+        success:true,
+        message:'Orders successfully fetched',
+        allorders
+      },{status:200})
+    } catch(error){
+      console.error("Feedback API Error:", error);
+      return Response.json(
+        {
+          success: false,
+          message: "Something went wrong while fetching orders",
         },
         { status: 500 }
       );
