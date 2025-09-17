@@ -34,8 +34,13 @@ export async function POST(request: Request) {
                 );
             }
             const token = jwt.sign(
-                { id: orgUser._id, email: orgUser.email },
-                process.env.JWT_SECRET!,
+            {
+                id: orgUser._id,
+                email: orgUser.email,
+                name: orgUser.name,
+            },
+            process.env.JWT_SECRET!,
+            { expiresIn: "7d" }
             );
             return NextResponse.json(
             {

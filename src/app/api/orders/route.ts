@@ -44,18 +44,19 @@ export async function POST(request:Request) {
           { status: 404 }
         );
       }
+      const parsedDate = new Date(date);
       const order = await OrderModel.create({
           orderId,
           productName,
           customeremail,
-          date,
-          feedback,
-          orderno,
+          date:parsedDate,
+          feedbackForm:feedback,
+          orderNo:orderno,
           gstin,
           organizationid: org._id
       })
       const cust=await CustomerModel.create({name:customername,email:customeremail})
-      await sendFeedbackEmail({productname:productName, customername, orderno, organizationName: user.name ?? "", gstin, date, feedbackForm:feedback.formid, customerEmail:customeremail})
+      await sendFeedbackEmail({productname:productName, customername, orderno, organizationName: user.name ?? "", gstin, date:parsedDate, feedbackForm:feedback.formid, customerEmail:customeremail})
       return Response.json({
         success:true,
         message:'Orders successfully created and feedback mail send to customer',

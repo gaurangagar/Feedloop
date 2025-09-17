@@ -2,6 +2,9 @@
 import { useSession } from 'next-auth/react'
 import React, { useState,useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { Skeleton } from "@/components/ui/skeleton"
+import axios from 'axios'
+import Link from 'next/link'
 
 const Page = () => {
 
@@ -9,17 +12,17 @@ const Page = () => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [allOrders, setAllorders] = useState({})
+  const [allOrders, setAllorders] = useState<any>(null)
   
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         setIsLoading(true)
-        const orders = await axios.get('/api/orders')
-        setAllorders(Orders)
+        const response = await axios.get('/api/orders')
+        setAllorders(response.data.response.allorders)
       } catch (error) {
-        setError(response.data.message || 'Error in fetching all orders.')
-      } finally{
+        setError(error?.response?.data?.message || 'Error in fetching all orders.')
+      } finally {
         setIsLoading(false)
       }
     }
@@ -31,7 +34,13 @@ const Page = () => {
       <div>Please 
         <Link href="/sign-in">Sign-in</Link>
          to see all your orders.</div>
-    </> : <>{allOrders}</>
+    </> : (
+      isLoading ? (
+        <Skeleton className="h-[20px] w-[100px] rounded-full" />
+      ) : (
+        <>{allOrders}</>
+      )
+    )
   )
 }
 

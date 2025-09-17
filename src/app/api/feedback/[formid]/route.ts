@@ -4,6 +4,49 @@ import dbConnect from "@/lib/dbConnect";
 import { feedbackFormModel } from "@/models/feedbackForm";
 import organizationModel from "@/models/organization";
 
+export async function GET(request: Request, { params }: { params: { id: string } }) {
+    await dbConnect();
+    try {
+        const id=params.id
+        const form=await feedbackFormModel.findOne({formid:id});
+        if(!form) {
+            return Response.json(
+                {
+                success: false,
+                message: "Form does not exists",
+                },
+                { status: 500 }
+            );
+        }
+        if(form.isFilled) {
+            return Response.json(
+                {
+                success: false,
+                message: "Form is already filled. Contact owner of this form for more details.",
+                },
+                { status: 400 }
+            );
+        }
+        return Response.json(
+            {
+                success: true,
+                message: "Feedback form fethed successfully.",
+                form
+            },
+            { status: 200 }
+        );
+    } catch (error) {
+        console.error("Feedback API Error:", error);
+        return Response.json(
+            {
+            success: false,
+            message: "Something went wrong while fetching feedback form",
+            },
+            { status: 500 }
+        );
+    }
+}
+
 export async function POST(request: Request, { params }: { params: { id: string } }) {
     await dbConnect();
     try {

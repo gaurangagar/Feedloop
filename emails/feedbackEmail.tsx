@@ -66,7 +66,7 @@ return (
                         feedback form.
                     </Text>
                     <Button
-                        href={feedbackForm}
+                        href={`${process.env.WEBSITE_URL}/feedback/${feedbackForm}`}
                         style={{
                             backgroundColor: "#2563eb",
                             color: "#ffffff",

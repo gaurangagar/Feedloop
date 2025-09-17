@@ -7,7 +7,7 @@ export async function sendFeedbackEmail({productname, customername, orderno, org
         await resend.emails.send({
         from: 'Acme <onboarding@resend.dev>',
         to: [customerEmail],
-        subject: 'Tell us about your experience with {productname}',
+        subject: `Tell us about your experience with ${productname}`,
         react: FeedbackEmail({productname, customername, orderno, organizationName, gstin, date, feedbackForm,customerEmail}),
     });
     } catch (error) {
