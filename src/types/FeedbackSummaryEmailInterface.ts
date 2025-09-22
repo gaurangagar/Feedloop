@@ -6,6 +6,8 @@ export type FeedbackItem = {
 export type FeedbackSummaryEmailInterface = {
   orderId: string;
   companyName: string;
+  productRating:number,
+  shopRating:number,
   overallSentiment: string;
   summary: string;
   highlights: string[];

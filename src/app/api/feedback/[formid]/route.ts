@@ -1,14 +1,14 @@
 import { feedbackSummarize } from "@/helpers/feedbackSummarize";
 import { sendinsightEmail } from "@/helpers/insightEmail";
 import dbConnect from "@/lib/dbConnect";
-import { feedbackFormModel } from "@/models/feedbackForm";
+import OrderModel, { feedbackFormModel } from "@/models/feedbackForm";
 import organizationModel from "@/models/organization";
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ formid: string }> }) {
     await dbConnect();
     try {
-        const id=params.id
-        const form=await feedbackFormModel.findOne({formid:id});
+        const { formid } = await params;
+        const form=await feedbackFormModel.findOne({formid});
         if(!form) {
             return Response.json(
                 {
@@ -30,7 +30,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
         return Response.json(
             {
                 success: true,
-                message: "Feedback form fethed successfully.",
+                message: "Feedback form fetched successfully.",
                 form
             },
             { status: 200 }
@@ -47,17 +47,19 @@ export async function GET(request: Request, { params }: { params: { id: string }
     }
 }
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(request: Request, { params }: { params: Promise<{ formid: string }> }) {
     await dbConnect();
     try {
-        const { answers,productRating,shopRating,organizationEmail,orderId } = await request.json();
+        const { formid } = await params;
+        const { answers,productRating,shopRating } = await request.json();
+        
         if (!answers || !Array.isArray(answers)) {
-        return Response.json(
-            { success: false, message: "Answers must be an array" },
-            { status: 400 }
-        )};
-        const id=params.id
-        const form=await feedbackFormModel.findOne({formid:id})
+            return Response.json(
+                { success: false, message: "Answers must be an array" },
+                { status: 400 }
+            )
+        };
+        const form=await feedbackFormModel.findOne({formid})
         if(!form) {
             return Response.json(
                 {
@@ -93,7 +95,16 @@ export async function POST(request: Request, { params }: { params: { id: string 
         form.shopRating=shopRating;
         form.isFilled=true
         await form.save();
-        const order=await orderId.find({orderId})
+        const order=await OrderModel.findOne({feedbackForm:form._id})
+        if(!order) {
+            return Response.json(
+                {
+                success: false,
+                message: "Order does not exists",
+                },
+                { status: 500 }
+            );
+        }
         const org = await organizationModel.findById(order.organizationid);
         if (!org) {
             return Response.json(
@@ -103,14 +114,13 @@ export async function POST(request: Request, { params }: { params: { id: string 
                 },{ status: 404 }
             );
         }
-        const response = await feedbackSummarize(orderId, form.answers);
-        await sendinsightEmail({ orderId, companyName: org.name, organizationEmail: org.email, feedbackInsight: response });
+        const response = await feedbackSummarize(order.orderId, form.answers,productRating,shopRating );
+        await sendinsightEmail({ orderId:order.orderId, companyName: org.name, productRating, shopRating,organizationEmail: org.email, feedbackInsight: response });
         await org.addRating(shopRating);
         return Response.json(
             {
                 success: true,
                 message: "Feedback submitted successfully",
-                formId: form.formid,
             },
             { status: 200 }
         );
@@ -119,7 +129,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
         return Response.json(
             {
             success: false,
-            message: "Something went wrong while creating feedback form",
+            message: "Something went wrong while submitting feedback form",
             },
             { status: 500 }
         );

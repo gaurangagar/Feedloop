@@ -55,11 +55,15 @@ export async function POST(request:Request) {
           gstin,
           organizationid: org._id
       })
-      const cust=await CustomerModel.create({name:customername,email:customeremail})
+      let cust = await CustomerModel.findOne({ name: customername, email: customeremail });
+      if (!cust) {
+        cust = await CustomerModel.create({ name: customername, email: customeremail });
+      }
       await sendFeedbackEmail({productname:productName, customername, orderno, organizationName: user.name ?? "", gstin, date:parsedDate, feedbackForm:feedback.formid, customerEmail:customeremail})
       return Response.json({
         success:true,
         message:'Orders successfully created and feedback mail send to customer',
+        formid:feedback.formid
       },{status:200})
     } catch(error){
       console.error("Feedback API Error:", error);

@@ -1,9 +1,8 @@
 import { ai } from "@/lib/genai";
 import { FeedbackSummaryEmailInterface } from "@/types/FeedbackSummaryEmailInterface";
+import { FeedbackItem } from "@/types/FeedbackSummaryEmailInterface";
 
-type FeedbackItem = { question: string; answer: string };
-
-export async function feedbackSummarize(orderId: string, feedbackArray: FeedbackItem[]):Promise<FeedbackSummaryEmailInterface> {
+export async function feedbackSummarize(orderId: string, feedbackArray: FeedbackItem[], productRating:Number, shopRating:Number):Promise<FeedbackSummaryEmailInterface> {
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: `
@@ -18,6 +17,8 @@ export async function feedbackSummarize(orderId: string, feedbackArray: Feedback
 
             {
             "orderId": string,
+            "productRating":number,
+            "ShopRating":number,
             "overallSentiment": "Positive | Neutral | Negative",
             "summary": string,  // A concise summary of the customer’s experience
             "highlights": string[],  // Key highlights of what the customer appreciated
@@ -39,8 +40,16 @@ export async function feedbackSummarize(orderId: string, feedbackArray: Feedback
     });
 
     // Extract the JSON string from the response and parse it
-    const content = response?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+    let content = response?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+    if (!content) {
+        throw new Error("No content returned from model");
+    }
+    content = content
+        .replace(/^```json\s*/i, "")
+        .replace(/^```\s*/i, "")
+        .replace(/```$/, "")
+        .trim();
     const summary: FeedbackSummaryEmailInterface = JSON.parse(content);
-
+    
     return summary;
 }

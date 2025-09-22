@@ -12,7 +12,7 @@ const Page = () => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [allOrders, setAllorders] = useState<any>(null)
+  const [allOrders, setAllorders] = useState(null)
   
   useEffect(() => {
     const fetchOrders = async () => {

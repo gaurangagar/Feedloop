@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(client)/(auth)/sign-in/page.jsx", "src/app/(client)/dashboard/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(client)/(auth)/sign-in/page.jsx", "src/app/(client)/dashboard/page.jsx", "src/components/ErrorAlert.jsx"],
   "exclude": ["node_modules"]
 }

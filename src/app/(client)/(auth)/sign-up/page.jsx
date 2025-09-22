@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import axios from 'axios';
 
 const Page = () => {
 
@@ -24,6 +25,7 @@ const Page = () => {
     })
     const [error, setError] = useState('')
     const handleSubmit = async (e) => {
+        e.preventDefault();
         if(credentials.email=='') {
             setError('Please enter your email')
         } else if(credentials.password=='') {

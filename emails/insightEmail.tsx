@@ -10,11 +10,18 @@ import {
 } from "@react-email/components";
 import { FeedbackSummaryEmailInterface } from "@/types/FeedbackSummaryEmailInterface";
 
-
+// Helper function to render stars
+function renderStars(rating: number, max = 5) {
+  const fullStars = "★".repeat(Math.round(rating));
+  const emptyStars = "☆".repeat(max - Math.round(rating));
+  return fullStars + emptyStars;
+}
 
 export default function FeedbackSummaryEmail({
   orderId,
   companyName,
+  productRating,
+  shopRating,
   overallSentiment,
   summary,
   highlights,
@@ -37,6 +44,18 @@ export default function FeedbackSummaryEmail({
             Below is the AI-generated summary of the customer’s feedback for
             this order:
           </Text>
+
+          <Section className="mb-6">
+            <Heading as="h2" className="text-lg font-semibold text-gray-800 mb-2">
+              Ratings
+            </Heading>
+            <Text className="text-gray-700">
+              Product: {renderStars(productRating)} ({productRating}/5)
+            </Text>
+            <Text className="text-gray-700">
+              Shop: {renderStars(shopRating)} ({shopRating}/5)
+            </Text>
+          </Section>
 
           <Section className="mb-6">
             <Heading as="h2" className="text-lg font-semibold text-gray-800 mb-2">
