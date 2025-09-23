@@ -62,7 +62,7 @@ export interface Order extends Document{
 const OrderSchema: Schema<Order> = new Schema({
     orderId:{
         type:String,
-        required: [true, "porderId is required"],
+        required: [true, "orderId is required"],
     },
     productName: {
         type: String,
