@@ -8,9 +8,9 @@ function Page() {
     const searchParams = useSearchParams()
     const orderId = searchParams.get("orderId")
 
-     useEffect(() => {
+    useEffect(() => {
         if (!orderId) {
-        router.replace("/dashboard") // protect from direct access
+            router.replace("/dashboard") // protect from direct access
         }
     }, [orderId, router])
 
