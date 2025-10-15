@@ -63,7 +63,8 @@ export async function POST(request:Request) {
       return Response.json({
         success:true,
         message:'Orders successfully created and feedback mail send to customer',
-        formid:feedback.formid
+        formid:feedback.formid,
+        order
       },{status:200})
     } catch(error){
       console.log("Feedback API Error:", error);

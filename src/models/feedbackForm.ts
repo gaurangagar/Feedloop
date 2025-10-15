@@ -1,4 +1,4 @@
-import mongoose,{Schema,Document, Types} from 'mongoose';
+import mongoose,{Schema,Document} from 'mongoose';
 import { Organization } from './organization';
 
 export interface feedbackForm extends Document{

@@ -2,7 +2,7 @@ import { ai } from "@/lib/genai";
 import { FeedbackSummaryEmailInterface } from "@/types/FeedbackSummaryEmailInterface";
 import { FeedbackItem } from "@/types/FeedbackSummaryEmailInterface";
 
-export async function feedbackSummarize(orderId: string, feedbackArray: FeedbackItem[], productRating:Number, shopRating:Number):Promise<FeedbackSummaryEmailInterface> {
+export async function feedbackSummarize(orderId: string, feedbackArray: FeedbackItem[], productRating:number, shopRating:number):Promise<FeedbackSummaryEmailInterface> {
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: `
@@ -34,6 +34,7 @@ export async function feedbackSummarize(orderId: string, feedbackArray: Feedback
 
             Customer Feedback:
             ${feedbackArray.map(item => `Q: ${item.question}\nA: ${item.answer}`).join("\n\n")}
+            - product rating-${productRating} and shop rating-${shopRating}
 
             Make the tone professional and business-friendly, suitable for emailing directly to the company.
             `
