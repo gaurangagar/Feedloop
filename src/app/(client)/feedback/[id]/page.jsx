@@ -50,53 +50,80 @@ const page = () => {
     };
     
   return (
-    <div>
+    <div className="max-w-xl mx-auto p-6 space-y-6 bg-gray-50 min-h-screen">
       {isLoading ? (
         <Skeleton className="h-[20px] w-[100px] rounded-full" />
       ) : error ? (
         ErrorAlert({title:"Error in fetching form",description:error})
       ) : (
-         <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="productrating">product rating</label>
-            <input 
-            type="number"
-            onChange={(e)=>setProductRating(e.target.value)}
-            value={productRating ?? ""}
-            min={1}
-            max={5}
-            required/>
+         <form 
+          onSubmit={handleSubmit} 
+          className="space-y-4 bg-white p-6 rounded-lg shadow-md"
+        >
+          <div className="flex flex-col space-y-1">
+            <label 
+              htmlFor="productrating" 
+              className="font-medium text-gray-700"
+            >Product Rating :</label>
+            <div className="flex gap-2">
+              {[1,2,3,4,5].map((n) => (
+                <span
+                  key={n}
+                  className={`text-2xl cursor-pointer ${productRating >= n ? "text-yellow-400" : "text-gray-300"}`}
+                  onClick={() => setProductRating(n)}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
           </div>
-          <div>
-            <label htmlFor="shoprating">shop rating</label>
-            <input 
-            type="number"
-            onChange={(e)=>setShopRating(e.target.value)}
-            value={shopRating ?? ""}
-            min={1}
-            max={5}
-            required/>
+          <div className="flex flex-col space-y-1">
+            <label 
+              htmlFor="shoprating" 
+              className="font-medium text-gray-700"
+              >Shop Rating :</label>
+            <div className="flex gap-2">
+              {[1,2,3,4,5].map((n) => (
+                <span
+                  key={n}
+                  className={`text-2xl cursor-pointer ${shopRating >= n ? "text-yellow-400" : "text-gray-300"}`}
+                  onClick={() => setShopRating(n)}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
           </div>
           {answers.map((key, ind) => (
-            <div key={ind}>
-              <label htmlFor={ind}>{key.question}</label>
+            <div 
+              key={ind} 
+              className="flex flex-col space-y-1"
+            >
+              <label 
+                htmlFor={ind} 
+                className="font-medium text-gray-700"
+              >{key.question}</label>
               <input
-              id={ind} 
-              type="text"
-              value={answers[ind].answer || ""}
-              onChange={(e) => {
-                setAnswers(prev =>
-                  prev.map((item, idx) =>
-                    idx === ind ? { ...item, answer: e.target.value } : item
-                  )
-                );
-              }}
-              required/>
+                id={ind} 
+                type="text"
+                value={answers[ind].answer || ""}
+                onChange={(e) => {
+                  setAnswers(prev =>
+                    prev.map((item, idx) =>
+                      idx === ind ? { ...item, answer: e.target.value } : item
+                    )
+                  );
+                }}
+                className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
             </div>
           ))}
-        <button type="submit">Submit</button>
-      </form>
-        
+        <button 
+          type="submit"
+          className="w-full bg-green-500 text-white font-semibold py-2 rounded hover:bg-green-600 transition"
+        >Submit</button>
+      </form> 
       )}
     </div>
   )

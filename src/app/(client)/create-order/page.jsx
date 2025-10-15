@@ -44,7 +44,7 @@ const Page = () => {
     setLoading(true);
     setMessage("");
     try {
-      const res = axios.post('/api/orders',{orderId,productName,customerName,customerEmail,orderNo, gstin, })
+      const res = await axios.post('/api/orders',{orderId,productName,customerName,customerEmail,orderNo,gstin,questions,date})
       alert("Form submitted!");
       router.push(`/order-created?orderId=${orderId}`)
     } catch (err) {

@@ -19,7 +19,7 @@ export async function POST(request:Request) {
         }, { status: 401 });
     }
     try{
-      const {orderId,productName,customername,customeremail,orderno,gstin,questions, date,}=await request.json();
+      const {orderId,productName,customerName,customerEmail,orderNo,gstin,questions, date,}=await request.json();
       if (!questions || !Array.isArray(questions) || questions.length === 0) {
         return Response.json(
           {
@@ -48,25 +48,25 @@ export async function POST(request:Request) {
       const order = await OrderModel.create({
           orderId,
           productName,
-          customeremail,
+          customeremail:customerEmail,
           date:parsedDate,
           feedbackForm:feedback,
-          orderNo:orderno,
+          orderNo,
           gstin,
           organizationid: org._id
       })
-      let cust = await CustomerModel.findOne({ name: customername, email: customeremail });
+      let cust = await CustomerModel.findOne({email: customerEmail });
       if (!cust) {
-        cust = await CustomerModel.create({ name: customername, email: customeremail });
+        cust = await CustomerModel.create({ name: customerName, email: customerEmail });
       }
-      await sendFeedbackEmail({productname:productName, customername, orderno, organizationName: user.name ?? "", gstin, date:parsedDate, feedbackForm:feedback.formid, customerEmail:customeremail})
+      await sendFeedbackEmail({productname:productName, customername: customerName, orderno: orderNo, organizationName: user.name ?? "", gstin, date:parsedDate, feedbackForm:feedback.formid, customerEmail})
       return Response.json({
         success:true,
         message:'Orders successfully created and feedback mail send to customer',
         formid:feedback.formid
       },{status:200})
     } catch(error){
-      console.error("Feedback API Error:", error);
+      console.log("Feedback API Error:", error);
       return Response.json(
         {
           success: false,
