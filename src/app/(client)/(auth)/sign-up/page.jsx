@@ -79,7 +79,8 @@ const Page = () => {
                             <input 
                             type="text"
                             value={credentials.name}
-                            onChange={(e)=>setCredentials.name(e.target.value)}
+                            onChange={(e) => setCredentials({ ...credentials, name: e.target.value })}
+
                             placeholder='Enter your organization name' />
                         </div>
                         <div>
@@ -87,7 +88,7 @@ const Page = () => {
                             <input
                             type="text"
                             value={credentials.email}
-                            onChange={(e)=>setCredentials.email(e.target.value)}
+                            onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
                             placeholder='Enter your email address' />
                         </div>
                         <div>
@@ -95,7 +96,7 @@ const Page = () => {
                             <input
                             type="password"
                             value={credentials.password}
-                            onChange={(e)=>setCredentials.password(e.target.value)}
+                            onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                             placeholder='Enter your password'
                              />
                         </div>

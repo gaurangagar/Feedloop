@@ -51,6 +51,7 @@ export const feedbackFormModel=(mongoose.models.feedbackForm as mongoose.Model<f
 export interface Order extends Document{
     orderId:string
     productName:string,
+    productDescription:string,
     customeremail:string,
     date:Date,
     feedbackForm: mongoose.Types.ObjectId | feedbackForm,
@@ -67,6 +68,10 @@ const OrderSchema: Schema<Order> = new Schema({
     productName: {
         type: String,
         required: [true, "product name is required"],
+    },
+    productDescription:{
+        type:String,
+        default:""
     },
     customeremail: {
         type: String,

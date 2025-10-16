@@ -1,9 +1,10 @@
 'use client'
-import React, { useEffect } from 'react'
+export const dynamic = 'force-dynamic';
+import React, { Suspense, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from "next/navigation"
 
-function page() {
+function OrderCreated() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const orderId = searchParams.get("orderId")
@@ -33,4 +34,10 @@ function page() {
     )
 }
 
-export default page
+export default function page() {
+    return (
+        <Suspense fallback={<div className="p-6 text-center">Loading order...</div>}>
+            <OrderCreated/>
+        </Suspense>
+    )
+}

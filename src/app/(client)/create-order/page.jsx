@@ -4,8 +4,10 @@ import axios from "axios";
 import { useRouter } from 'next/navigation'
 
 const Page = () => {
+
   const [orderId, setOrderId] = useState("");
   const [productName, setProductName] = useState("");
+  const [productDescription, setproductDescription] = useState("")
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [orderNo, setOrderNo] = useState("");
@@ -16,6 +18,22 @@ const Page = () => {
   const [message, setMessage] = useState("");
 
   const router = useRouter()
+
+  const generateQuestions = async() => {
+    if(!productName) {
+      setMessage('Please fill the product name to generate questions.');
+      return;
+    }
+    try{
+      const response=await axios.post('/api/ques-generate',{productName,productDescription})
+      const generatedQuestions=response.data.data // in array format
+      setQuestions((prev) => [...prev, ...generatedQuestions]);
+      setMessage('Questions generated successfully!');
+    } catch(err) {
+      console.log(err)
+      setMessage("Error in generating questions. Please try again!")
+    }
+  }
 
   const handleQuestionChange = (index, value) => {
     const newQuestions = [...questions];
@@ -29,12 +47,12 @@ const Page = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if(
-      orderId=="" || 
-      productName=="" || 
-      customerName=="" || 
-      customerEmail=="" || 
-      orderNo=="" || 
-      gstin=="" || 
+      orderId.trim()=="" || 
+      productName.trim()=="" || 
+      customerName.trim()=="" || 
+      customerEmail.trim()=="" || 
+      orderNo.trim()=="" || 
+      gstin.trim()=="" || 
       date=="" || 
       questions.some((q) => q.trim() === "")
     ) {
@@ -44,7 +62,7 @@ const Page = () => {
     setLoading(true);
     setMessage("");
     try {
-      const res = await axios.post('/api/orders',{orderId,productName,customerName,customerEmail,orderNo,gstin,questions,date})
+      const res = await axios.post('/api/orders',{orderId,productName,productDescription,customerName,customerEmail,orderNo,gstin,questions,date})
       alert("Form submitted!");
       router.push(`/order-created?orderId=${orderId}`)
     } catch (err) {
@@ -74,6 +92,16 @@ const Page = () => {
           onChange={(e) => setProductName(e.target.value)}
           className="w-full p-2 border rounded"
           required
+        />
+        <textarea
+          placeholder="Product Description"
+          value={productDescription}
+          onChange={(e) => setproductDescription(e.target.value)}
+          className="w-full p-2 border rounded resize-none overflow-hidden"
+          onInput={(e) => {
+            e.target.style.height = "auto";
+            e.target.style.height = e.target.scrollHeight + "px";
+          }}
         />
         <input
           type="text"
@@ -114,7 +142,14 @@ const Page = () => {
         />
 
         <div>
-          <h2 className="font-semibold mb-2">Feedback Questions</h2>
+          <div className="flex">
+            <h2 className="font-semibold mb-2">Feedback Questions</h2>
+            <button
+              type="button"
+              onClick={generateQuestions}
+              className="ml-2 text-blue-500 underline"
+            >Generate questions</button>
+          </div>
           {questions.map((q, idx) => (
             <div key={idx} className="flex mb-2 gap-2">
               <input

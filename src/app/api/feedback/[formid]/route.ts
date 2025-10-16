@@ -3,8 +3,9 @@ import { sendinsightEmail } from "@/helpers/insightEmail";
 import dbConnect from "@/lib/dbConnect";
 import OrderModel, { feedbackFormModel } from "@/models/feedbackForm";
 import organizationModel from "@/models/organization";
+import { NextRequest } from "next/server";
 
-export async function GET(request: Request, { params }: { params: Promise<{ formid: string }> }) {
+export async function GET(request:NextRequest, {params}:{ params: Promise<{ formid: string }> }) {
     await dbConnect();
     try {
         const { formid } = await params;

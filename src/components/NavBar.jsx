@@ -13,8 +13,8 @@ const Navbar = () => {
     <nav className="w-full bg-white shadow-md px-6 py-4 flex justify-between items-center sticky top-0 z-50">
       {/* Left side links */}
       <div className="flex items-center gap-6">
-        <Link href="/dashboard" className="font-semibold text-lg">
-          Dashboard
+        <Link href="/" className="font-semibold text-lg">
+          Home
         </Link>
         <Link href="/create-order" className="text-gray-600 hover:text-black">
           Create Order
@@ -34,7 +34,9 @@ const Navbar = () => {
             </Button>
           </div>
         ) : (
-          <Button onClick={() => signIn()}>Sign In</Button>
+          <Link href="/sign-in" className="text-gray-600 hover:text-black">
+            Sign in
+          </Link>
         )}
       </div>
     </nav>
