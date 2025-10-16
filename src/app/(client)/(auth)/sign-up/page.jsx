@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
@@ -64,55 +63,71 @@ const Page = () => {
             }
         },[session])
     return (
-        <div>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Create Your Account</CardTitle>
-                    <CardDescription>Sign up with your email and password, or continue with Google to get started instantly.</CardDescription>
-                    <CardAction></CardAction>
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+            <Card className="w-full max-w-md shadow-md border border-gray-200">
+                <CardHeader className="text-center space-y-2">
+                    <CardTitle className="text-2xl font-semibold text-gray-900">Create Your Account</CardTitle>
+                    <CardDescription className="text-gray-500 text-sm">Sign up with your email and password, or continue with Google to get started instantly.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    {error ? <Alert variant="default | destructiv"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert> : null}
-                    <form action="" onSubmit={handleSubmit}>
-                        <div>
-                            <label>Organization Name</label>
+                <CardContent className="space-y-4">
+                    {error ? <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert> : null}
+                    <form action="" onSubmit={handleSubmit} className="space-y-4">
+                        <div className="flex flex-col space-y-1">
+                            <label className="text-sm font-medium text-gray-700">Organization Name</label>
                             <input 
-                            type="text"
-                            value={credentials.name}
-                            onChange={(e) => setCredentials({ ...credentials, name: e.target.value })}
-
-                            placeholder='Enter your organization name' />
+                                type="text"
+                                value={credentials.name}
+                                onChange={(e) => setCredentials({ ...credentials, name: e.target.value })}
+                                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                placeholder='Enter your organization name' 
+                                required
+                            />
                         </div>
-                        <div>
-                            <label>Email Address</label>
+                        <div className="flex flex-col space-y-1">
+                            <label className="text-sm font-medium text-gray-700">Email Address</label>
                             <input
-                            type="text"
-                            value={credentials.email}
-                            onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
-                            placeholder='Enter your email address' />
+                                type="text"
+                                value={credentials.email}
+                                onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
+                                placeholder='Enter your email address' 
+                                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                required
+                            />
                         </div>
-                        <div>
-                            <label>Password</label>
+                        <div className="flex flex-col space-y-1">
+                            <label className="text-sm font-medium text-gray-700">Password</label>
                             <input
-                            type="password"
-                            value={credentials.password}
-                            onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                            placeholder='Enter your password'
-                             />
+                                type="password"
+                                value={credentials.password}
+                                onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                                placeholder='Enter your password'
+                                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                required
+                            />
                         </div>
                         <div>
-                            <button type='submit'>Signin</button>
+                            <button 
+                                type='submit' 
+                                className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition"
+                            >Signin</button>
                         </div>
                         <div>
-                            <button type='button' onClick={() => signIn("google")}>
-                                Sign In with Google
+                            <button 
+                                type='button' 
+                                onClick={() => signUp("google")}
+                                className="w-full border border-gray-300 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition"
+                            >
+                                Sign Up with Google
                             </button>
                         </div> 
                     </form>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="text-center text-sm text-gray-600">
                     Already joined! 
-                    <Link href="/sign-in">Sign-in</Link>
+                    <Link 
+                        href="/sign-in"
+                        className="text-blue-600 hover:underline"
+                    >Sign-in</Link>
                 </CardFooter>
             </Card>
         </div>

@@ -35,20 +35,39 @@ const Page = () => {
 
   if (!session || !session.user) {
     return (
-      <div>
-        Please <Link href="/sign-in">Sign-in</Link> to see all your orders.
+      <div className="w-screen h-screen flex items-center justify-center bg-gray-50">
+        <p className="mb-4 text-gray-700 text-lg">
+          Please <Link href="/sign-in" className="text-blue-600 hover:underline">Sign-in</Link> to see all your orders.
+        </p>
       </div>
     )
   }
 
   if (isLoading) {
-    return <Skeleton className="h-[20px] w-[100px] rounded-full" />
+    return (
+      <div className="w-screen h-screen flex items-center justify-center bg-gray-50">
+      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md space-y-4">
+        <Skeleton className="h-6 w-3/4 rounded-full animate-pulse" />
+        <Skeleton className="h-4 w-full rounded-full animate-pulse" />
+        <Skeleton className="h-4 w-5/6 rounded-full animate-pulse" />
+        <Skeleton className="h-10 w-full rounded-lg animate-pulse" />
+      </div>
+    </div>
+    );
   }
 
   if (!allOrders || allOrders.length === 0) {
     return (
-      <div className="p-6 text-center text-gray-500">
-        No orders found.
+      <div className="w-screen h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center p-6 bg-white rounded-lg shadow-md">
+          <p className="mb-4 text-gray-700 text-lg">
+            No orders found.{' '}
+            <Link href="/create-order" className="text-blue-600 hover:underline">
+              Create a new order
+            </Link>
+            .
+          </p>
+        </div>
       </div>
     )
   }

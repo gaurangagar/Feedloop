@@ -142,12 +142,12 @@ const Page = () => {
         />
 
         <div>
-          <div className="flex">
-            <h2 className="font-semibold mb-2">Feedback Questions</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Feedback Questions</h2>
             <button
               type="button"
               onClick={generateQuestions}
-              className="ml-2 text-blue-500 underline"
+              className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
             >Generate questions</button>
           </div>
           {questions.map((q, idx) => (
@@ -178,7 +178,7 @@ const Page = () => {
             Add Question
           </button>
         </div>
-
+        {message && <p className="mt-4 text-center">{message}</p>}
         <button
           type="submit"
           disabled={loading}
@@ -187,8 +187,6 @@ const Page = () => {
           {loading ? "Submitting..." : "Submit Order"}
         </button>
       </form>
-
-      {message && <p className="mt-4 text-center">{message}</p>}
     </div>
   );
 }
