@@ -19,11 +19,9 @@ const page = () => {
         try {
             setIsLoading(true)
             const response=await axios.get(`/api/feedback/${id}`)
-            console.log(response)
             setForm(response.data.form)
             setAnswers(response.data.form.answers)
         } catch (error) {
-          console.log(error)
           setError(error?.response?.data?.message || 'Error in fetching feedback form.')
         } finally{
             setIsLoading(false)

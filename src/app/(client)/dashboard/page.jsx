@@ -3,12 +3,12 @@
 import { useSession } from 'next-auth/react'
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Star } from "lucide-react"
 import axios from 'axios'
 import Link from 'next/link'
+import Loading from '@/components/Loading'
 
 const Page = () => {
   const { data: session } = useSession()
@@ -45,14 +45,7 @@ const Page = () => {
 
   if (isLoading) {
     return (
-      <div className="w-screen h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md space-y-4">
-        <Skeleton className="h-6 w-3/4 rounded-full animate-pulse" />
-        <Skeleton className="h-4 w-full rounded-full animate-pulse" />
-        <Skeleton className="h-4 w-5/6 rounded-full animate-pulse" />
-        <Skeleton className="h-10 w-full rounded-lg animate-pulse" />
-      </div>
-    </div>
+      <Loading />
     );
   }
 
